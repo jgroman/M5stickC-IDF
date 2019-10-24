@@ -17,7 +17,7 @@
 #include "freertos/task.h"
 #include "tft.h"
 #include "time.h"
-#include "rom/tjpgd.h"
+#include "esp32/rom/tjpgd.h"
 #include "tftspi.h"
 
 #define DEG_TO_RAD 0.01745329252

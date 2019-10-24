@@ -2,9 +2,11 @@
 
    See README.md file to get detailed usage of this example.
 */
-#include <stdio.h>
+//#include <stdio.h>
 
-//#include "driver/i2s.h"
+#include "freertos/FreeRTOS.h"
+#include "driver/i2s.h"			// Include only AFTER including FreeRTOS
+
 #include "esp_system.h"
 #include "esp_err.h"
 #include "esp_log.h"
@@ -140,10 +142,10 @@ long map(long x, long in_min, long in_max, long out_min, long out_max)
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-/*
+
 void MicRecordTest()
 {
-	uint16_t posX = 0, yData, lastY = 0, lastYs = 0, posX_b = 0;
+	uint16_t posX = 0, yData, lastY = 0;
 	uint16_t count_n = 0, count_i = 0;
 	int32_t sumData;
 	size_t bytesread;
@@ -217,7 +219,7 @@ void MicRecordTest()
 	TFT_fillScreen(TFT_BLACK);
 	TFT_print(">>>M5 StickC<<<", CENTER, 0);
 }
-*/
+
 
 static void stickc_test_task(void *arg)
 {
@@ -225,7 +227,7 @@ static void stickc_test_task(void *arg)
 	{
 		MPU6886Test();
 		AXP192Test();
-		//MicRecordTest();
+		MicRecordTest();
 	}
 }
 
@@ -243,7 +245,7 @@ void buttonEvent(void *handler_arg, esp_event_base_t base, int32_t id, void *eve
 	}
 }
 
-/*
+
 void i2sInit()
 {
 	i2s_config_t i2s_config = {
@@ -267,16 +269,18 @@ void i2sInit()
 	i2s_set_pin(I2S_NUM_0, &pin_config);
 	i2s_set_clk(I2S_NUM_0, 44100, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_MONO);
 }
-*/
+
 
 void app_main(void)
 {
 	M5Init();
-	//i2sInit();
+	i2sInit();
 
 	esp_event_handler_register_with(event_loop, BUTTON_A_EVENT_BASE, BUTTON_PRESSED_EVENT, buttonEvent, NULL);
 	esp_event_handler_register_with(event_loop, BUTTON_B_EVENT_BASE, BUTTON_PRESSED_EVENT, buttonEvent, NULL);
 
+	LCDtest();
+	
 	font_rotate = 0;
 	text_wrap = 0;
 	font_transparent = 0;
