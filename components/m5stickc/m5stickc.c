@@ -130,7 +130,8 @@ esp_err_t M5Init()
 	EventInit();
 
 	ESP_LOGI(TAG, "Setting up I2C");
-	e = InitI2CWire(&wire0);
+	e = wire_init(&wire0);
+	
 	if (e == ESP_OK)
 	{
 		AxpInitFromList(&wire0, InitStickC);

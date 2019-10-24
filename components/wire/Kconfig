@@ -1,0 +1,53 @@
+menu "Wire I2C Library"
+
+    menu "I2C Port 0"
+
+        config WIRE_PORT0_I2C_SCL_GPIO
+            int "Port 0 SCL GPIO"
+            range 0 36
+            default 22
+            help
+                Wire Port 0 SCL GPIO number
+
+        config WIRE_PORT0_I2C_SDA_GPIO
+            int "Port 0 SDA GPIO"
+            range 0 36
+            default 21
+            help
+                Wire Port 0 SDA GPIO number
+
+        config WIRE_PORT0_CLOCK_SPEED
+            int "Port 0 Clock Speed [Hz]"
+            range 0 1000000
+            default 100000
+            help
+                Wire Port 0 Clock Speed
+
+    endmenu 
+
+    menu "I2C Port 1"
+
+        config WIRE_PORT1_I2C_SCL_GPIO
+            int "Port 1 SCL GPIO"
+            range 0 36
+            default 33
+            help
+                Wire Port 1 SCL GPIO number
+
+        config WIRE_PORT1_I2C_SDA_GPIO
+            int "Port 1 SDA GPIO"
+            range 0 36
+            default 32
+            help
+                Wire Port 1 SDA GPIO number
+
+        config WIRE_PORT1_CLOCK_SPEED
+            int "Port 1 Clock Speed [Hz]"
+            range 0 1000000
+            default 100000
+            help
+                Wire Port 1 Clock Speed
+
+    endmenu 
+
+endmenu

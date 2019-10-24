@@ -17,19 +17,15 @@
 #define _DRIVER_SPI_MASTER_LOBO_H_
 
 #include "esp_err.h"
-//#include "esp_intr_alloc.h"
 #include "esp_intr_alloc.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp32/rom/lldesc.h"
 #include "soc/spi_struct.h"
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 //Maximum amount of bytes that can be put in one DMA descriptor
 #define SPI_MAX_DMA_LEN (4096-4)

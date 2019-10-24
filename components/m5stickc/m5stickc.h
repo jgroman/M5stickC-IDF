@@ -8,19 +8,6 @@
 #ifndef _M5STICKC_H_
 #define _M5STICKC_H_
 
-/*
-//#include "esp_system.h"
-#include "esp_err.h"
-#include "esp_log.h"
-
-#include "axp192.h"
-#include "mpu6886.h"
-#include "tft.h"
-#include "wire.h"
-
-#include "button.h"
-*/
-
 #include "axp192.h"
 #include "mpu6886.h"
 #include "tft.h"
@@ -39,12 +26,9 @@ extern spi_lobo_device_handle_t m5display_spi;    /*!< SPI device handle */
 #define M5DISPLAY_WIDTH 160               /*!< Display width in pixels after rotation */
 #define M5DISPLAY_HEIGHT 80               /*!< Display height in pixels after rotation */
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * @brief   Initialize M5StickC

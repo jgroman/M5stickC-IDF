@@ -22,8 +22,6 @@ extern "C"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
 
-//#include "m5stickc.h"
-
 
 #define BUTTON_BUTTON_A_GPIO GPIO_NUM_37
 #define BUTTON_BUTTON_B_GPIO GPIO_NUM_39

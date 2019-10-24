@@ -5,12 +5,12 @@ enum Ascale Acscale = AFS_8G;
 
 void MPU6886I2C_Read_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *read_Buffer)
 {
-    I2CreadBuff(&wire0, driver_Addr, start_Addr, read_Buffer, number_Bytes);
+    wire_read_bytes(&wire0, driver_Addr, start_Addr, read_Buffer, number_Bytes);
 }
 
 void MPU6886I2C_Write_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *write_Buffer)
 {
-    I2Cwirtebuff(&wire0, driver_Addr, start_Addr, write_Buffer, number_Bytes);
+    wire_write_bytes(&wire0, driver_Addr, start_Addr, write_Buffer, number_Bytes);
 }
 
 int MPU6886Init(void)

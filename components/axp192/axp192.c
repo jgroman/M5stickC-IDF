@@ -25,61 +25,67 @@ int8_t AxpInitFromList(wire_t *wire, uint8_t *Buff)
 
 void AxpWriteByte(wire_t *wire, uint8_t Addr, uint8_t Data)
 {
-    I2Cwirtebyte(wire, 0x34, Addr, Data);
+    wire_write(wire, 0x34, Addr, Data);
 }
 
 uint8_t AxpRead8bit(wire_t *wire, uint8_t Addr)
 {
-    uint8_t redata = I2Creadbyte(wire, 0x34, Addr);
+    uint8_t redata = wire_read(wire, 0x34, Addr);
     return redata;
 }
+
 uint16_t AxpRead12Bit(wire_t *wire, uint8_t Addr)
 {
     uint16_t Data = 0;
     uint8_t rd_buff[2];
-    I2CreadBuff(wire, 0x34, Addr, rd_buff, 2);
+    wire_read_bytes(wire, 0x34, Addr, rd_buff, 2);
     Data = ((rd_buff[0] << 4) + rd_buff[1]); //
     return Data;
 }
+
 uint16_t AxpRead13Bit(wire_t *wire, uint8_t Addr)
 {
     uint16_t Data = 0;
     uint8_t rd_buff[2];
-    I2CreadBuff(wire, 0x34, Addr, rd_buff, 2);
+    wire_read_bytes(wire, 0x34, Addr, rd_buff, 2);
     Data = ((rd_buff[0] << 5) + rd_buff[1]); //
     return Data;
 }
+
 uint16_t AxpRead16bit(wire_t *wire, uint8_t Addr)
 {
     uint16_t Data = 0;
     uint8_t rd_buff[2];
-    I2CreadBuff(wire, 0x34, Addr, rd_buff, 2);
+    wire_read_bytes(wire, 0x34, Addr, rd_buff, 2);
     Data = ((rd_buff[0] << 8) + rd_buff[1]); //
     return Data;
 }
+
 uint32_t AxpRead24bit(wire_t *wire, uint8_t Addr)
 {
     uint32_t ReData = 0;
     for (int i = 0; i < 3; i++)
     {
         ReData <<= 8;
-        ReData |= I2Creadbyte(wire, 0x34, Addr + i);
+        ReData |= wire_read(wire, 0x34, Addr + i);
     }
     return ReData;
 }
+
 uint32_t AxpRead32bit(wire_t *wire, uint8_t Addr)
 {
     uint32_t ReData = 0;
     for (int i = 0; i < 4; i++)
     {
         ReData <<= 8;
-        ReData |= I2Creadbyte(wire, 0x34, Addr + i);
+        ReData |= wire_read(wire, 0x34, Addr + i);
     }
     return ReData;
 }
+
 void AxpReadBuff(wire_t *wire, uint8_t Addr, uint8_t Size, uint8_t *Buff)
 {
-    I2CreadBuff(wire, 0x34, Addr, Buff, Size);
+    wire_read_bytes(wire, 0x34, Addr, Buff, Size);
 }
 
 float AXP192GetBatVoltage(wire_t *wire)
