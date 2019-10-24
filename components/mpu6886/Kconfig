@@ -1,0 +1,17 @@
+menu "MPU6886 Sensor"
+
+    config MPU6886_I2C_PORT
+        int "MPU6886 I2C Port"
+        range 0 1
+        default 0
+        help
+            MPU6886 I2C Port
+
+    config MPU6886_I2C_ADDRESS
+        hex "MPU6886 I2C Address"
+        range 0 0x7F
+        default 0x68
+        help
+            MPU6886 I2C Address
+
+endmenu

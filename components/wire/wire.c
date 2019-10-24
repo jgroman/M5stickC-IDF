@@ -45,6 +45,16 @@ wire_init(wire_t* wire)
 				I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
 }
 
+wire_t
+wire_get_port_data(i2c_port_t i2c_num)
+{
+	if (i2c_num == 0)
+	{
+		return wire0;
+	}
+
+	return wire1;
+}
 
 uint8_t
 wire_read(wire_t *p_wire, uint8_t device_addr, uint8_t reg_addr)

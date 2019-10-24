@@ -18,10 +18,14 @@ typedef struct wire_s {
 } wire_t;
 
 extern wire_t wire0;	// I2C Port 0
-extern wire_t wire1;	// I2c Port 1
+extern wire_t wire1;	// I2C Port 1
 
 esp_err_t 
 wire_init(wire_t* wire);
+
+// Returns Wire struct of a given port
+wire_t
+wire_get_port_data(i2c_port_t i2c_num);
 
 uint8_t
 wire_read(wire_t *p_wire, uint8_t device_addr, uint8_t reg_addr);

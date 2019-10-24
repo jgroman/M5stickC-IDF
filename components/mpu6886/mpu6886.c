@@ -1,89 +1,95 @@
-#include "MPU6886.h"
+#include "wire.h" 
+
+#include "mpu6886_config.h"
+#include "mpu6886.h"
 
 enum Gscale Gyscale = GFS_2000DPS;
 enum Ascale Acscale = AFS_8G;
 
-void MPU6886I2C_Read_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *read_Buffer)
-{
-    wire_read_bytes(&wire0, driver_Addr, start_Addr, read_Buffer, number_Bytes);
-}
+static void
+reg_read(uint8_t reg_addr, uint8_t length, uint8_t *p_buf_rd);
 
-void MPU6886I2C_Write_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *write_Buffer)
-{
-    wire_write_bytes(&wire0, driver_Addr, start_Addr, write_Buffer, number_Bytes);
-}
+static void
+reg_write(uint8_t reg_addr, uint8_t length, uint8_t *p_buf_wr);
 
-int MPU6886Init(void)
+
+int 
+mpu6886_init(void)
 {
     uint8_t tempdata[1];
     uint8_t regdata;
 
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_WHOAMI, 1, tempdata);
-    if (tempdata[0] != 0x19)
+    reg_read(MPU6886_REG_WHOAMI, 1, tempdata);
+
+    if (tempdata[0] != MPU6886_WHOAMI_VALUE)
+    {
         return -1;
+    }
+
     vTaskDelay(5 / portTICK_PERIOD_MS);
 
     regdata = 0x00;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_PWR_MGMT_1, 1, &regdata);
+    reg_write(MPU6886_PWR_MGMT_1, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = (0x01 << 7);
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_PWR_MGMT_1, 1, &regdata);
+    reg_write(MPU6886_PWR_MGMT_1, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = (0x01 << 0);
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_PWR_MGMT_1, 1, &regdata);
+    reg_write(MPU6886_PWR_MGMT_1, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x10;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_ACCEL_CONFIG, 1, &regdata);
+    reg_write(MPU6886_ACCEL_CONFIG, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x18;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_GYRO_CONFIG, 1, &regdata);
+    reg_write(MPU6886_GYRO_CONFIG, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x01;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_CONFIG, 1, &regdata);
+    reg_write(MPU6886_REG_CONFIG, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x05;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_SMPLRT_DIV, 1, &regdata);
+    reg_write(MPU6886_SMPLRT_DIV, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x00;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_INT_ENABLE, 1, &regdata);
+    reg_write(MPU6886_INT_ENABLE, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x00;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_ACCEL_CONFIG2, 1, &regdata);
+    reg_write(MPU6886_ACCEL_CONFIG2, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x00;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_USER_CTRL, 1, &regdata);
+    reg_write(MPU6886_USER_CTRL, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x00;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_FIFO_EN, 1, &regdata);
+    reg_write(MPU6886_FIFO_ENABLE, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x22;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_INT_PIN_CFG, 1, &regdata);
+    reg_write(MPU6886_INT_PIN_CFG, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     regdata = 0x01;
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_INT_ENABLE, 1, &regdata);
-
+    reg_write(MPU6886_INT_ENABLE, 1, &regdata);
     vTaskDelay(100 / portTICK_PERIOD_MS);
+
     MPU6886getGres();
     MPU6886getAres();
+    
     return 0;
 }
 
 void MPU6886getAccelAdc(int16_t *ax, int16_t *ay, int16_t *az)
 {
     uint8_t buf[6];
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_ACCEL_XOUT_H, 6, buf);
+    reg_read(MPU6886_ACCEL_XOUT_H, 6, buf);
 
     *ax = ((int16_t)buf[0] << 8) | buf[1];
     *ay = ((int16_t)buf[2] << 8) | buf[3];
@@ -93,7 +99,7 @@ void MPU6886getGyroAdc(int16_t *gx, int16_t *gy, int16_t *gz)
 {
 
     uint8_t buf[6];
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_GYRO_XOUT_H, 6, buf);
+    reg_read(MPU6886_GYRO_XOUT_H, 6, buf);
 
     *gx = ((uint16_t)buf[0] << 8) | buf[1];
     *gy = ((uint16_t)buf[2] << 8) | buf[3];
@@ -103,7 +109,7 @@ void MPU6886getGyroAdc(int16_t *gx, int16_t *gy, int16_t *gz)
 void MPU6886getTempAdc(int16_t *t)
 {
     uint8_t buf[2];
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_TEMP_OUT_H, 2, buf);
+    reg_read(MPU6886_TEMP_OUT_H, 2, buf);
 
     *t = ((uint16_t)buf[0] << 8) | buf[1];
 }
@@ -156,38 +162,38 @@ void MPU6886setFIFOEnable(bool enableflag)
     if (enableflag)
     {
         regdata = 0x0c;
-        MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_FIFO_ENABLE, 1, &regdata);
+        reg_write(MPU6886_FIFO_ENABLE, 1, &regdata);
         regdata = 0x40;
-        MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_USER_CTRL, 1, &regdata);
+        reg_write(MPU6886_USER_CTRL, 1, &regdata);
         //MPU6886_FIFO_ENABLE = 0x0C
         //MPU6886_USER_CTRL = 0x40
     }
     else
     {
         regdata = 0x00;
-        MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_FIFO_ENABLE, 1, &regdata);
+        reg_write(MPU6886_FIFO_ENABLE, 1, &regdata);
         regdata = 0x00;
-        MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_USER_CTRL, 1, &regdata);
+        reg_write(MPU6886_USER_CTRL, 1, &regdata);
     }
 }
 
 uint8_t MPU6886ReadFIFO()
 {
     uint8_t ReData = 0;
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_FIFO_R_W, 1, &ReData);
+    reg_read(MPU6886_FIFO_R_W, 1, &ReData);
     return ReData;
 }
 
 void MPU6886ReadFIFOBuff(uint8_t *DataBuff, uint16_t Length)
 {
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_FIFO_R_W, Length, DataBuff);
+    reg_read(MPU6886_FIFO_R_W, Length, DataBuff);
 }
 
 uint16_t MPU6886ReadFIFOCount()
 {
     uint8_t Buff[2];
     uint16_t ReData = 0;
-    MPU6886I2C_Read_NBytes(MPU6886_ADDRESS, MPU6886_FIFO_CONUTH, 2, Buff);
+    reg_read(MPU6886_FIFO_CONUTH, 2, Buff);
     ReData = Buff[0];
     ReData <<= 8;
     ReData |= Buff[1];
@@ -199,7 +205,7 @@ void MPU6886SetGyroFsr(enum Gscale scale)
     //return IIC_Write_Byte(MPU_GYRO_CFG_REG,scale<<3);//设置陀螺仪满量程范围
     unsigned char regdata;
     regdata = (scale << 3);
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_GYRO_CONFIG, 1, &regdata);
+    reg_write(MPU6886_GYRO_CONFIG, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
     Gyscale = scale;
@@ -210,7 +216,7 @@ void MPU6886SetAccelFsr(enum Ascale scale)
 {
     unsigned char regdata;
     regdata = (scale << 3);
-    MPU6886I2C_Write_NBytes(MPU6886_ADDRESS, MPU6886_ACCEL_CONFIG, 1, &regdata);
+    reg_write(MPU6886_ACCEL_CONFIG, 1, &regdata);
     vTaskDelay(10 / portTICK_PERIOD_MS);
     Acscale = scale;
     MPU6886getAres();
@@ -247,4 +253,18 @@ void MPU6886getTempData(float *t)
     MPU6886getTempAdc(&temp);
 
     *t = (float)temp / 326.8 + 25.0;
+}
+
+static void
+reg_read(uint8_t reg_addr, uint8_t length, uint8_t *p_buf_rd)
+{
+    wire_t wire_port = wire_get_port_data(CONFIG_MPU6886_I2C_PORT);
+    wire_read_bytes(&wire_port, CONFIG_MPU6886_I2C_ADDRESS, reg_addr, p_buf_rd, length);
+}
+
+static void
+reg_write(uint8_t reg_addr, uint8_t length, uint8_t *p_buf_wr)
+{
+    wire_t wire_port = wire_get_port_data(CONFIG_MPU6886_I2C_PORT);
+    wire_write_bytes(&wire_port, CONFIG_MPU6886_I2C_ADDRESS, reg_addr, p_buf_wr, length);
 }

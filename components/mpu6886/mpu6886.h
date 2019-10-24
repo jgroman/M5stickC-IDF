@@ -10,16 +10,18 @@
 
 #include <stdio.h>
 
-#include "esp_log.h"
-
-#include "wire.h" 
-
-#define MPU6886_ADDRESS           0x68 
-#define MPU6886_WHOAMI            0x75
-#define MPU6886_ACCEL_INTEL_CTRL  0x69
 #define MPU6886_SMPLRT_DIV        0x19
+
+#define MPU6886_REG_CONFIG        0x1A
+#define MPU6886_GYRO_CONFIG       0x1B
+#define MPU6886_ACCEL_CONFIG      0x1C
+#define MPU6886_ACCEL_CONFIG2     0x1D
+
+#define MPU6886_FIFO_ENABLE		  0x23
+
 #define MPU6886_INT_PIN_CFG       0x37
 #define MPU6886_INT_ENABLE        0x38
+
 #define MPU6886_ACCEL_XOUT_H      0x3B
 #define MPU6886_ACCEL_XOUT_L      0x3C
 #define MPU6886_ACCEL_YOUT_H      0x3D
@@ -37,19 +39,19 @@
 #define MPU6886_GYRO_ZOUT_H       0x47
 #define MPU6886_GYRO_ZOUT_L       0x48
 
+#define MPU6886_ACCEL_INTEL_CTRL  0x69
+
 #define MPU6886_USER_CTRL         0x6A
 #define MPU6886_PWR_MGMT_1        0x6B
 #define MPU6886_PWR_MGMT_2        0x6C
-#define MPU6886_CONFIG            0x1A
-#define MPU6886_GYRO_CONFIG       0x1B
-#define MPU6886_ACCEL_CONFIG      0x1C
-#define MPU6886_ACCEL_CONFIG2     0x1D
-#define MPU6886_FIFO_EN           0x23
 
-#define MPU6886_FIFO_ENABLE		  0x23
 #define MPU6886_FIFO_CONUTH		  0x72
 #define MPU6886_FIFO_CONUTL		  0x73
 #define MPU6886_FIFO_R_W		  0x74
+
+#define MPU6886_REG_WHOAMI        0x75
+
+#define MPU6886_WHOAMI_VALUE	  0x19
 
 //#define G (9.8)
 #define RtA     57.324841
@@ -73,7 +75,9 @@ enum Gscale {
 extern enum Gscale Gyscale;
 extern enum Ascale Acscale;
 
-int MPU6886Init(void);
+int 
+mpu6886_init(void);
+
 void MPU6886getAccelAdc(int16_t* ax, int16_t* ay, int16_t* az);
 void MPU6886getGyroAdc(int16_t* gx, int16_t* gy, int16_t* gz);
 void MPU6886getTempAdc(int16_t *t);
@@ -93,8 +97,6 @@ void MPU6886ReadFIFOBuff( uint8_t *DataBuff ,uint16_t Length );
 
 float aRes, gRes;
 
-void MPU6886I2C_Read_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *read_Buffer);
-void MPU6886I2C_Write_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *write_Buffer);
 void MPU6886getGres();
 void MPU6886getAres();
 

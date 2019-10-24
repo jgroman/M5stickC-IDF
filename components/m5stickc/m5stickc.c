@@ -134,6 +134,7 @@ esp_err_t M5Init()
 	
 	if (e == ESP_OK)
 	{
+		// Init AXP192 Power Manager
 		AxpInitFromList(&wire0, InitStickC);
 	}
 	else
@@ -141,6 +142,7 @@ esp_err_t M5Init()
 		ESP_LOGE(TAG, "Error setting up I2C: %s", esp_err_to_name(e));
 		++error_count;
 	}
+
 	// Init button
 	e = ButtonInit();
 	if (e == ESP_OK)
@@ -153,7 +155,8 @@ esp_err_t M5Init()
 		++error_count;
 	}
 
-	MPU6886Init();
+	// Init MPU6886 sensor
+	mpu6886_init();
 
 	// Init display
 	e = M5DisplayInit();
