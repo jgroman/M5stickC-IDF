@@ -1,0 +1,64 @@
+/**
+ * m5stickc.c
+ *
+ * (C) 2019 - Hades2001 <hades2001@foxmail.com>
+ * This code is licensed under the MIT License.
+ */
+
+#ifndef _M5STICKC_H_
+#define _M5STICKC_H_
+
+/*
+//#include "esp_system.h"
+#include "esp_err.h"
+#include "esp_log.h"
+
+#include "axp192.h"
+#include "mpu6886.h"
+#include "tft.h"
+#include "wire.h"
+
+#include "button.h"
+*/
+
+#include "axp192.h"
+#include "mpu6886.h"
+#include "tft.h"
+
+#include "esp_event_base.h"
+#include "spi_master_lobo.h"
+
+#include "tftspi.h"
+#include "button.h"
+
+
+extern esp_event_loop_handle_t event_loop;   /*!< Event loop for M5 device-specific events */
+extern spi_lobo_device_handle_t m5display_spi;    /*!< SPI device handle */
+
+#define M5DISPLAY_TYPE DISP_TYPE_ST7735S  /*!< Display type for display driver */
+#define M5DISPLAY_WIDTH 160               /*!< Display width in pixels after rotation */
+#define M5DISPLAY_HEIGHT 80               /*!< Display height in pixels after rotation */
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+/**
+ * @brief   Initialize M5StickC
+ *
+ *          Initializes power management, display and buttons.
+ *
+ * @return  ESP_OK success
+ *          ESP_FAIL errors found
+ */
+esp_err_t M5Init();
+esp_err_t EventInit();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _M5STICKC_H_

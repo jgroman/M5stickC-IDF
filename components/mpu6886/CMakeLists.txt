@@ -1,8 +1,8 @@
 idf_component_register(
     SRCS
-        "m5stick_demo.c"
+        "mpu6886.c"
     INCLUDE_DIRS 
         "."
     REQUIRES
-        m5stickc
+        wire
 )

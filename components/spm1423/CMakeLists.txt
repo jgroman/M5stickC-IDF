@@ -1,8 +1,6 @@
 idf_component_register(
     SRCS
-        "m5stick_demo.c"
+        "i2smic.c"
     INCLUDE_DIRS 
         "."
-    REQUIRES
-        m5stickc
 )
